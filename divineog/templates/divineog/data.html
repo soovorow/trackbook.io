@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h1>{{ app.bundle_id }}</h1>
+
+    <a href="{% url 'divineog:update' app.id %}">Edit</a>
+
+{% endblock %}

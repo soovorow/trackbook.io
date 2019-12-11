@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Solve the problem with In-App Purchases FB Analytics{% endblock %}
+{% load static %}
+
+{% block content %}
+
+    <div class="row mb-5">
+        <div class="col-12 col-md-6">
+            <div class="mb-5"></div>
+            <div class="mb-5">
+                <h1 class="h1">
+                    Get accurate In-App Purchase logs in Facebook Analytics.
+                </h1>
+                <p>
+                    Optimize your Ad Campaigns for Purchases with clear logs to maximize performance.
+                </p>
+                <a href="{% url 'login' %}" class="btn btn-primary">Sign In For Free</a>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <img src="{% static 'img/cover.png' %}" alt="Cover" class="img-fluid">
+        </div>
+    </div>
+
+    <div class="row mb-5"></div>
+
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="h2 text-center">
+                We solve the problem with In-App Purchases.
+                <br> No more wrong nums.
+            </h2>
+        </div>
+        <div class="col-12 col-md-6">
+            <img src="{% static 'img/before.png' %}" alt="Before" class="img-fluid mb-3">
+            <ul class="bullets-x">
+                <li>Inaccurate data, 2-5 times difference.</li>
+                <li>Lack of opportunity to optimize for purchases.</li>
+            </ul>
+        </div>
+        <div class="col-12 col-md-6">
+            <img src="{% static 'img/after.png' %}" alt="Before" class="img-fluid mb-3">
+            <ul class="bullets-ok">
+                <li>Accurate In-App Purchases Logs Data.</li>
+                <li>Optimize your ad campaigns like a boss.</li>
+            </ul>
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,37 @@
+body {
+  background: #f8f9fa;
+}
+
+.container {
+  max-width: 970px;
+}
+
+ul.bullets-x {
+  list-style-image: url("/static/img/x.png");
+}
+
+ul.bullets-ok {
+  list-style-image: url("/static/img/ok.png");
+}
+
+div.app-container {
+  padding: 20px;
+  border: 1px solid #D0D3D8;
+  border-radius: 13px;
+}
+
+.gray-color {
+  color: #A1A8B5;
+}
+
+.apps__add-more, .apps__add-more:hover {
+  display: block;
+  padding: 24px;
+  text-align: center;
+  text-decoration: none;
+  color: #000;
+  border: 1px dashed #D0D3D8;
+  border-radius: 13px;
+}
+
+/*# sourceMappingURL=base.css.map */

@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="row">
+        <h1 class="col-12 mb-4 h2">
+            {% block title %}My Apps{% endblock %}
+        </h1>
+    </div>
+
+    {% if apps_list %}
+
+        <div class="row">
+            {% for app in apps_list %}
+                <div class="col-12 col-md-6 mb-3">
+                    <div class="app-container">
+                        <h2 class="h5">{{ app.app_name }}</h2>
+                        <p class="gray-color">
+                            {% if app.platform == 'I' %}
+                                <i class="fab fa-apple"></i> AppStore
+                            {% else %}
+                                <i class="fab fa-google-play"></i> Google Play
+                            {% endif %}
+                        </p>
+                        <div class="row">
+                            <div class="col-12 col-md-9">
+                                {{ app.bundle_id }}
+                            </div>
+                            <div class="col-12 col-md-3 text-right">
+                                <a href="{% url 'divineog:detail' app.id %}">Stats <i class="fas fa-chevron-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+            <div class="col-12 col-md-6">
+                <a href="{% url 'divineog:create' %}" class="apps__add-more ">
+                    <i class="fas fa-plus"></i>
+                    Add one more
+                </a>
+            </div>
+
+        </div>
+
+        {% if is_paginated %}
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+{#                    {% if page_obj.has_previous %}#}
+{#                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>#}
+{#                        </li>#}
+{#                    {% endif %}#}
+
+                    {% for i in page_obj.paginator.page_range %}
+                        {% if page_obj.number == i %}
+                            <li class="page-item active"><a href="#" class="page-link">{{ i }}</a></li>
+                        {% else %}
+                            <li class="page-item"><a href="?page={{ i }}" class="page-link">{{ i }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+
+{#                    {% if page_obj.has_next %}#}
+{#                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>#}
+{#                        </li>#}
+{#                    {% endif %}#}
+
+                </ul>
+            </nav>
+        {% endif %}
+
+    {% else %}
+        <div class="row">
+            <div class="col">
+                <p>No apps are available.</p>
+                <a href="{% url 'divineog:create' %}" class="btn btn-primary">Add App</a>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
