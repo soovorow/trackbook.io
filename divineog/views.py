@@ -1,16 +1,37 @@
 import secrets
 
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.utils import timezone
 from django.views import generic
 from django.views.generic import CreateView, UpdateView, DetailView, ListView
+from django.views.generic.base import View
 
 from divineog.models import App
 
 
-class IndexView(LoginRequiredMixin, ListView):
+class HomeView(View):
+    def get(self, request):
+        return render(request, 'divineog/home.html')
+
+
+class SignUpView(View):
+    def get(self, request):
+        return render(request, 'divineog/signup.html', {'form': UserCreationForm()})
+
+    def post(self, request):
+        form = UserCreationForm(request.POST)
+
+        if form.is_valid():
+            user = form.save()
+            return redirect(reverse('login'))
+
+        return render(request, 'divineog/signup.html', {'form': form})
+
+
+class AppList(LoginRequiredMixin, ListView):
     template_name = 'divineog/index.html'
     context_object_name = 'apps_list'
     paginate_by = 5
@@ -21,7 +42,7 @@ class IndexView(LoginRequiredMixin, ListView):
 
 class AppCreate(LoginRequiredMixin, CreateView):
     model = App
-    fields = ['platform', 'app_name', 'bundle_id', 'fb_app_id', 'fb_client_token']
+    fields = ['app_name', 'bundle_id', 'fb_app_id', 'fb_client_token']
 
     def form_valid(self, form):
         form.instance.user = self.request.user
@@ -32,7 +53,7 @@ class AppCreate(LoginRequiredMixin, CreateView):
 
 class AppUpdate(LoginRequiredMixin, UpdateView):
     model = App
-    fields = ['platform', 'app_name', 'bundle_id', 'fb_app_id', 'fb_client_token']
+    fields = ['app_name', 'bundle_id', 'fb_app_id', 'fb_client_token']
 
 
 class AppDetails(LoginRequiredMixin, DetailView):

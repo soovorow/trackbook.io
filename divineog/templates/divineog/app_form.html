@@ -16,10 +16,10 @@
             <form method="post" action="{% url 'divineog:create' %}" class="">
                 {% csrf_token %}
 
-                <div class="form-group">
-                    {{ form.platform.label_tag }}
-                    {{ form.platform|add_class:'form-control' }}
-                </div>
+{#                <div class="form-group">#}
+{#                    {{ form.platform.label_tag }}#}
+{#                    {{ form.platform|add_class:'form-control' }}#}
+{#                </div>#}
 
                 <div class="form-group">
                     {{ form.app_name.label_tag }}

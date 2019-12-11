@@ -2,8 +2,126 @@
 
 {% block content %}
 
-    <h1>{{ app.bundle_id }}</h1>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', {'packages': ['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+        google.charts.setOnLoadCallback(drawPie);
 
-    <a href="{% url 'divineog:update' app.id %}">Edit</a>
+        function drawChart() {
+            let data = google.visualization.arrayToDataTable([
+                ['Year', 'Sales'],
+                ['2013', 1000],
+                ['2014', 1170],
+                ['2015', 660],
+                ['2016', 1030]
+            ]);
+
+            let options = {
+                title: 'Purchases',
+                hAxis: {title: 'Year', titleTextStyle: {color: '#333'}},
+                vAxis: {minValue: 0},
+                legend: 'none',
+                backgroundColor: '#f8f9fa'
+            };
+
+            let chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
+            chart.draw(data, options);
+        }
+
+        function drawPie() {
+            let data = google.visualization.arrayToDataTable([
+                ['Task', 'Hours per Day'],
+                ['Clear', 8],
+                ['Fraud', 2]
+            ]);
+
+            let options = {
+                title: 'Fradulent Activity',
+                pieHole: 0.4,
+                legend: 'none',
+                backgroundColor: '#f8f9fa'
+            };
+
+            let chart = new google.visualization.PieChart(document.getElementById('donutchart'));
+            chart.draw(data, options);
+        }
+    </script>
+
+    <div class="row mb-5">
+        <div class="col-12 col-md-3 mb-3">
+            <h1>{{ app.app_name }}</h1>
+
+            <p class="gray-color">
+                {% if app.platform == 'I' %}
+                    <i class="fab fa-apple"></i> AppStore
+                {% else %}
+                    <i class="fab fa-google-play"></i> Google Play
+                {% endif %}
+            </p>
+
+            <p>
+                <span class="gray-color">Byndle ID:</span>
+                <br>
+                {{ app.bundle_id }}
+            </p>
+
+            <a href="{% url 'divineog:update' app.id %}">Settings</a>
+        </div>
+
+        <div class="col-12 col-md-9">
+            <div class="row">
+                <div class="col-12 col-md-7 mb-3">
+                    <div class="row">
+                        <div id="chart_div" style="width: 100%; height: 300px;"></div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-5 mb-3">
+                    <div class="row">
+                        <div id="donutchart" style="width: 100%; height: 300px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="table-responsive">
+                <table class="table ">
+                    <thead>
+                    <tr>
+                        <th>Transaction ID</th>
+                        <th>Bundle Version</th>
+                        <th>Product ID</th>
+                        <th>Sum</th>
+                        <th>Currency</th>
+                        <th>Is Sandbox</th>
+                        <th>Is Valid</th>
+                        <th>Is Logged</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for purch in app.purchase_set.all %}
+                        <tr>
+                            <td>{{ purch.transaction_id }}</td>
+                            <td>{{ purch.bundle_short_version }}</td>
+                            <td>{{ purch.product_id }}</td>
+                            <td>{{ purch.sum }}</td>
+                            <td>{{ purch.currency }}</td>
+                            <td>{{ purch.is_sandbox }}</td>
+                            <td>{{ purch.is_valid }}</td>
+                            <td>{{ purch.is_logged }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>u
+                </table>
+            </div>
+
+
+        </div>
+    </div>
 
 {% endblock %}

@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-
 {% load widget_tweaks %}
 
 {% block content %}
@@ -44,6 +43,7 @@
 
             <input type="submit" value="login" class="btn btn-primary">
             <input type="hidden" name="next" value="{{ next }}">
+            <a href="{% url 'signup' %}">Sign Up</a>
         </form>
 
     </div>

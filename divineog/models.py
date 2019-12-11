@@ -13,7 +13,7 @@ class App(models.Model):
     api_key = models.CharField(max_length=32, unique=True)
 
     app_name = models.CharField(max_length=70, default='Untitled App')
-    platform = models.CharField(max_length=1, choices=PLATFORMS)
+    platform = models.CharField(max_length=1, choices=PLATFORMS, default='I')
     bundle_id = models.CharField(max_length=255, unique=True)
 
     fb_app_id = models.CharField(max_length=32)

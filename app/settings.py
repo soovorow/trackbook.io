@@ -24,7 +24,11 @@ SECRET_KEY = '4ohxt@6bv11x4*$7knh62d498u%-f@78)t_)7z(tzo_!#j+t!0'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    '178.62.252.127'
+]
 
 # Application definition
 
@@ -35,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'polls.apps.PollsConfig',
     'divineog.apps.DivineogConfig',
     'widget_tweaks',
 ]
@@ -121,13 +124,18 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
-STATIC_URL = '/static/'
-
-# Custom Settings
-
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
-LOGIN_REDIRECT_URL = 'home'
+STATIC_URL = '/static/'
+STATIC_ROOT = '/var/www/fakebook/static/'
+
+LOGIN_REDIRECT_URL = 'divineog:index'
 LOGOUT_REDIRECT_URL = 'home'
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'soovorow'
+EMAIL_HOST_PASSWORD = '30020212ehaVAB'
