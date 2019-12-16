@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('divineog', '0001_initial'),
+        ('trackbook', '0001_initial'),
     ]
 
     operations = [

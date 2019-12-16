@@ -19,7 +19,7 @@ from django.contrib import admin
 from django.urls import include, path
 
 from app import views, settings
-from divineog.views import HomeView, SignUpView
+from trackbook.views import HomeView, SignUpView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -27,6 +27,6 @@ urlpatterns = [
     path('', HomeView.as_view(), name='home'),
     path('auth/signup', SignUpView.as_view(), name='signup'),
     path('auth/', include('django.contrib.auth.urls')),
-    path('apps/', include('divineog.urls')),
+    path('analytics/', include('trackbook.urls')),
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

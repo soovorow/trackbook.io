@@ -22,7 +22,7 @@ class App(models.Model):
     created_at = models.DateTimeField()
 
     def get_absolute_url(self):
-        return reverse_lazy('divineog:detail', kwargs={'pk': self.pk})
+        return reverse_lazy('trackbook:detail', kwargs={'pk': self.pk})
 
 
 class Purchase(models.Model):

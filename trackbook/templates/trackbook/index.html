@@ -26,7 +26,7 @@
                                 {{ app.bundle_id }}
                             </div>
                             <div class="col-12 col-md-3 text-right">
-                                <a href="{% url 'divineog:detail' app.id %}">Stats <i class="fas fa-chevron-right"></i></a>
+                                <a href="{% url 'trackbook:detail' app.id %}">Stats <i class="fas fa-chevron-right"></i></a>
                             </div>
                         </div>
                     </div>
@@ -36,7 +36,7 @@
             {% endfor %}
 
             <div class="col-12 col-md-6">
-                <a href="{% url 'divineog:create' %}" class="apps__add-more ">
+                <a href="{% url 'trackbook:create' %}" class="apps__add-more ">
                     <i class="fas fa-plus"></i>
                     Add one more
                 </a>
@@ -73,7 +73,7 @@
         <div class="row">
             <div class="col">
                 <p>No apps are available.</p>
-                <a href="{% url 'divineog:create' %}" class="btn btn-primary">Add App</a>
+                <a href="{% url 'trackbook:create' %}" class="btn btn-primary">Add App</a>
             </div>
         </div>
     {% endif %}

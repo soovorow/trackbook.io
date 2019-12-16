@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'divineog.apps.DivineogConfig',
+    'trackbook.apps.TrackbookConfig',
     'widget_tweaks',
 ]
 
@@ -131,7 +131,7 @@ STATICFILES_DIRS = [
 STATIC_URL = '/static/'
 STATIC_ROOT = '/var/www/fakebook/static/'
 
-LOGIN_REDIRECT_URL = 'divineog:index'
+LOGIN_REDIRECT_URL = 'trackbook:index'
 LOGOUT_REDIRECT_URL = 'home'
 
 EMAIL_USE_TLS = True

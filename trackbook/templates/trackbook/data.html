@@ -48,6 +48,15 @@
         }
     </script>
 
+
+    <div class="row">
+        <div class="col-12">
+            <p class="mb-4 h2">
+                <a href="{% url 'trackbook:index' %}"><i class="fas fa-chevron-left"></i> My Apps</a>
+            </p>
+        </div>
+    </div>
+
     <div class="row mb-5">
         <div class="col-12 col-md-3 mb-3">
             <h1>{{ app.app_name }}</h1>
@@ -66,7 +75,7 @@
                 {{ app.bundle_id }}
             </p>
 
-            <a href="{% url 'divineog:update' app.id %}">Settings</a>
+            <a href="{% url 'trackbook:update' app.id %}">Settings</a>
         </div>
 
         <div class="col-12 col-md-9">

@@ -44,7 +44,7 @@ class Migration(migrations.Migration):
                 ('ext_info', models.TextField()),
                 ('request_body', models.TextField()),
                 ('log_timestamp', models.IntegerField()),
-                ('app', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='divineog.App')),
+                ('app', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='trackbook.App')),
             ],
         ),
     ]

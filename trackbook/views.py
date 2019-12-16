@@ -9,17 +9,17 @@ from django.views import generic
 from django.views.generic import CreateView, UpdateView, DetailView, ListView
 from django.views.generic.base import View
 
-from divineog.models import App
+from trackbook.models import App
 
 
 class HomeView(View):
     def get(self, request):
-        return render(request, 'divineog/home.html')
+        return render(request, 'trackbook/home.html')
 
 
 class SignUpView(View):
     def get(self, request):
-        return render(request, 'divineog/signup.html', {'form': UserCreationForm()})
+        return render(request, 'trackbook/signup.html', {'form': UserCreationForm()})
 
     def post(self, request):
         form = UserCreationForm(request.POST)
@@ -28,11 +28,11 @@ class SignUpView(View):
             user = form.save()
             return redirect(reverse('login'))
 
-        return render(request, 'divineog/signup.html', {'form': form})
+        return render(request, 'trackbook/signup.html', {'form': form})
 
 
 class AppList(LoginRequiredMixin, ListView):
-    template_name = 'divineog/index.html'
+    template_name = 'trackbook/index.html'
     context_object_name = 'apps_list'
     paginate_by = 5
 
@@ -58,4 +58,4 @@ class AppUpdate(LoginRequiredMixin, UpdateView):
 
 class AppDetails(LoginRequiredMixin, DetailView):
     model = App
-    template_name = 'divineog/data.html'
+    template_name = 'trackbook/data.html'

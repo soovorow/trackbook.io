@@ -1,8 +1,8 @@
 from django.urls import path, reverse
 
-from divineog import views
+from trackbook import views
 
-app_name = 'divineog'
+app_name = 'trackbook'
 urlpatterns = [
     path('', views.AppList.as_view(), name='index'),
     path('add/', views.AppCreate.as_view(), name='create'),
