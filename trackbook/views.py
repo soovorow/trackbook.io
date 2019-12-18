@@ -168,6 +168,13 @@ class LogEvent(View):
         purchase.is_valid = 1
         purchase.save()
 
+        # Is Sandbox Request?
+        if purchase.is_sandbox:
+            return JsonResponse({
+                'status': 'success',
+                'purchase': purchase.as_json()
+            })
+
         # Log Facebook Event
         fb = b['data']['fb']
 

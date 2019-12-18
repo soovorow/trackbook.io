@@ -1,3 +1,7 @@
+# Common
+* [Apple Developer Documentation Archive](https://developer.apple.com/library/archive/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateRemotely.html#//apple_ref/doc/uid/TP40010573-CH104-SW3)   
+* [Google Play Developer API Documentation](https://developers.google.com/android-publisher/api-ref/purchases/products/get) 
+
 # POST /analytics/log 
 HTTP Headers Authentication: Bearer %APP_API_KEY%
 ```json
