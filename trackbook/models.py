@@ -47,7 +47,7 @@ class Purchase(models.Model):
     app = models.ForeignKey(App, on_delete=models.CASCADE)
 
     log_timestamp = models.IntegerField()
-    transaction_date = models.CharField(max_length=32)
+    transaction_date = models.CharField(max_length=32, null=True)
     transaction_id = models.CharField(max_length=64, unique=True)
     advertiser_id = models.CharField(max_length=64, null=True)
     fb_user_id = models.CharField(max_length=64, null=True)

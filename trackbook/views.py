@@ -4,6 +4,7 @@ import secrets
 import urllib
 from json import JSONDecodeError
 
+import requests
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponseServerError
@@ -16,7 +17,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.views.generic import CreateView, UpdateView, DetailView, ListView
 from django.views.generic.base import View
-from pip._vendor import requests
 
 from trackbook.models import App, Purchase
 
