@@ -32,8 +32,8 @@
         function drawPie() {
             let data = google.visualization.arrayToDataTable([
                 ['Task', 'Hours per Day'],
-                ['Clear', 8],
-                ['Fraud', 2]
+                ['Clear', {{ app.get_clear_purchases_count }}],
+                ['Fraud', {{ app.get_fraud_purchases_count }}]
             ]);
 
             let options = {
@@ -75,6 +75,12 @@
                 {{ app.bundle_id }}
             </p>
 
+            <p>
+                <span class="gray-color">Api Key</span>
+                <br>
+                {{ app.id }}:{{ app.api_key }}
+            </p>
+
             <a href="{% url 'trackbook:update' app.id %}">Settings</a>
         </div>
 
@@ -102,6 +108,7 @@
                 <table class="table ">
                     <thead>
                     <tr>
+                        <th>Datetime</th>
                         <th>Transaction ID</th>
                         <th>Bundle Version</th>
                         <th>Product ID</th>
@@ -113,8 +120,9 @@
                     </tr>
                     </thead>
                     <tbody>
-                    {% for purch in app.purchase_set.all %}
+                    {% for purch in app.purchase_set_reversed.all %}
                         <tr>
+                            <td>{{ purch.get_created_at }}</td>
                             <td>{{ purch.transaction_id }}</td>
                             <td>{{ purch.bundle_short_version }}</td>
                             <td>{{ purch.product_id }}</td>
@@ -125,7 +133,7 @@
                             <td>{{ purch.is_logged }}</td>
                         </tr>
                     {% endfor %}
-                    </tbody>u
+                    </tbody>
                 </table>
             </div>
 

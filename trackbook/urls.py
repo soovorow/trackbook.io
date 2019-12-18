@@ -4,6 +4,7 @@ from trackbook import views
 
 app_name = 'trackbook'
 urlpatterns = [
+    path('log', views.LogEvent.as_view(), name='log'),
     path('', views.AppList.as_view(), name='index'),
     path('add/', views.AppCreate.as_view(), name='create'),
     path('<int:pk>/', views.AppDetails.as_view(), name='detail'),

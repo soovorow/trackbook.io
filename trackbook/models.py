@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse, reverse_lazy
@@ -18,17 +20,34 @@ class App(models.Model):
 
     fb_app_id = models.CharField(max_length=32)
     fb_client_token = models.CharField(max_length=64)
+    # fb_access_token = models.CharField(max_length=64)
 
     created_at = models.DateTimeField()
 
     def get_absolute_url(self):
         return reverse_lazy('trackbook:detail', kwargs={'pk': self.pk})
 
+    def purchase_set_reversed(self):
+        return self.purchase_set.order_by('-pk')
+
+    def get_clear_purchases_count(self):
+        total = self.purchase_set.count()
+        valid = self.purchase_set.filter(is_valid=1).count()
+        # ratio = invalid/total
+        return valid
+
+    def get_fraud_purchases_count(self):
+        total = self.purchase_set.count()
+        invalid = self.purchase_set.filter(is_valid=0).count()
+        # ratio = invalid/total
+        return invalid
+
 
 class Purchase(models.Model):
-
     app = models.ForeignKey(App, on_delete=models.CASCADE)
 
+    log_timestamp = models.IntegerField()
+    transaction_date = models.CharField(max_length=32)
     transaction_id = models.CharField(max_length=64, unique=True)
     advertiser_id = models.CharField(max_length=64, null=True)
     fb_user_id = models.CharField(max_length=64, null=True)
@@ -44,4 +63,24 @@ class Purchase(models.Model):
 
     ext_info = models.TextField()  # extinfo
     request_body = models.TextField()  # body
-    log_timestamp = models.IntegerField()  # logTime
+
+    def as_json(self):
+        return dict(
+            app_id=self.app_id,
+            log_timestamp=self.log_timestamp,
+            transaction_id=self.transaction_id,
+            advertiser_id=self.advertiser_id,
+            fb_user_id=self.fb_user_id,
+            bundle_short_version=self.bundle_short_version,
+            product_id=self.product_id,
+            sum=self.sum,
+            currency=self.currency,
+            is_sandbox=self.is_sandbox,
+            is_valid=self.is_valid,
+            is_logged=self.is_logged,
+            ext_info=self.ext_info,
+            request_body=self.request_body,
+        )
+
+    def get_created_at(self):
+        return datetime.datetime.utcfromtimestamp(self.log_timestamp)
