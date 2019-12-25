@@ -3,3 +3,4 @@
 /venv
 output
 *.pyc
+/app/settings_local.py
