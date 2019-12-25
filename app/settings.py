@@ -128,8 +128,9 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
-STATIC_URL = '/static/'
-STATIC_ROOT = '/var/www/fakebook/static/'
+STATIC_URL = '/assets/'
+STATIC_ROOT = '/Users/soovorow/Dev/zukerlogg/production'
+# STATIC_ROOT = '/var/www/trackbook/static/'
 
 LOGIN_REDIRECT_URL = 'trackbook:index'
 LOGOUT_REDIRECT_URL = 'home'
