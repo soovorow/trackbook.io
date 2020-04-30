@@ -44,6 +44,7 @@ class Facebook:
                 "fb_content_type": "product",
                 "fb_iap_product_type": "inapp",
                 "_eventName": "fb_mobile_purchase",
+                "Source": "trackbook.io"
             }]
         }
         request = requests.post(url, headers=headers, data=json.dumps(data))
