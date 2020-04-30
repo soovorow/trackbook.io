@@ -107,7 +107,7 @@ class LogEvent(View):
             price_sum = body['data']['valueToSum']
             currency = body['data']['currency']
             bundle_short_version = body['data']['bundleShortVersion']
-            payload = body['data']['receipt-data']
+            payload = body['data']['receipt_data']
         except KeyError:
             return JsonResponse({'status': 'error', 'message': 'Incorrect key-value format.'})
 
@@ -130,12 +130,12 @@ class LogEvent(View):
 
         # Is purchase already logged?
         if purchase.is_logged == 1:
-            return JsonResponse({'status': 'warning', 'message': 'Transaction already logged.'})
+            return JsonResponse({'status': 'error', 'message': 'Transaction already logged.'})
 
         # Is apple receipt validation passed?
         isValidPurchase = False
         b = json.loads(purchase.request_body)
-        payload = b['data']['receipt-data']
+        payload = b['data']['receipt_data']
         requestData = {'receipt-data': payload}
         env = 'buy'
         if purchase.is_sandbox: env = 'sandbox'
@@ -147,7 +147,7 @@ class LogEvent(View):
             status = response['status']
             receipt = response['receipt']
         except KeyError:
-            return JsonResponse({'status': 'warning', 'message': 'Wrong environment or Apple verification service is '
+            return JsonResponse({'status': 'error', 'message': 'Wrong environment or Apple verification service is '
                                                                  'not available'})
 
         if status != 0:
