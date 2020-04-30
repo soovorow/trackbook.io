@@ -152,8 +152,9 @@ class LogEvent(View):
 
         if status != 0:
             return JsonResponse({'status': 'error', 'message': 'Invalid receipt.'})
-        # if receipt['bundle_id'] != app.bundle_id:
-        #     return JsonResponse({'status': 'error', 'message': 'Fake receipt.'})
+
+        if receipt['bundle_id'] != app.bundle_id:
+            return JsonResponse({'status': 'error', 'message': 'Fake receipt.'})
 
         in_app = receipt['in_app']
         for p in in_app:
