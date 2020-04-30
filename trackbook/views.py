@@ -22,6 +22,7 @@ from django.views.generic.base import View
 from trackbook.logger import Logger
 from trackbook.models import App, Purchase
 from trackbook.services.apple import Apple
+from trackbook.services.facebook import Facebook
 
 
 class HomeView(View):
@@ -109,6 +110,7 @@ class LogEvent(View):
             currency = body['data']['currency']
             bundle_short_version = body['data']['bundleShortVersion']
             payload = body['data']['receipt_data']
+            extinfo = body['data']['fb']['extinfo']
         except KeyError:
             return JsonResponse({'status': 'error', 'message': 'Incorrect key-value format.'})
 
@@ -122,6 +124,7 @@ class LogEvent(View):
             purchase.advertiser_id = advertiser_id
             purchase.bundle_short_version = bundle_short_version
             purchase.product_id = product_id
+            purchase.ext_info = json.dumps(extinfo)
             purchase.sum = price_sum
             purchase.currency = currency
             purchase.request_body = json.dumps(body)
@@ -133,100 +136,39 @@ class LogEvent(View):
             return JsonResponse({'status': 'error', 'message': 'Transaction already logged.'})
 
         # Is apple receipt validation passed?
-        isValidPurchase = False
-
         try:
-            isSandbox, status, receipt = Apple.verify_receipt(True, payload)
+            is_sandbox, is_valid, transaction_date = Apple.verify_receipt(
+                payload,
+                app.bundle_id,
+                purchase.product_id,
+                purchase.transaction_id
+            )
         except Exception:
             Logger.error(str(Exception))
             return JsonResponse({'status': 'warning', 'message': 'Apple verification service is not available'})
 
-        if status != 0:
+        if is_valid:
+            purchase.is_sandbox = is_sandbox
+            purchase.transaction_date = transaction_date
+            purchase.is_valid = 1
+            purchase.save()
+        else:
             purchase.transaction_id = "fake_" + purchase.transaction_id
             purchase.save()
             return JsonResponse({'status': 'error', 'message': 'Fake receipt.'})
 
-        if receipt['bundle_id'] != app.bundle_id:
-            purchase.transaction_id = "fake_" + purchase.transaction_id
-            purchase.save()
-            return JsonResponse({'status': 'error', 'message': 'Fake receipt.'})
-
-        for p in receipt['in_app']:
-            if p['product_id'] == purchase.product_id:
-                if p['transaction_id'] == purchase.transaction_id:
-                    isValidPurchase = True
-                    purchase.transaction_date = p['purchase_date']
-
-        if not isValidPurchase:
-            purchase.transaction_id = "fake_" + purchase.transaction_id
-            purchase.save()
-            return JsonResponse({'status': 'error', 'message': 'Fake receipt'})
-
-        purchase.is_sandbox = isSandbox
-        purchase.is_valid = 1
-        purchase.save()
-
-        # Is Sandbox Request?
         if purchase.is_sandbox:
-            return JsonResponse({
-                'status': 'success',
-                'purchase': purchase.as_json()
-            })
+            return JsonResponse({'status': 'success', 'purchase': purchase.as_json() })
 
         # Log Facebook Event
-        b = json.loads(purchase.request_body)
-        fb = b['data']['fb']
+        try:
+            is_logged, log_response = Facebook.log_purchase(app, purchase)
+        except Exception:
+            Logger.error(str(Exception))
+            return JsonResponse({'status': 'error', 'message': 'Facebook log goes wrong'})
 
-        token_request = requests.get('https://graph.facebook.com/oauth/access_token'
-                                     '?client_id=' + app.fb_app_id +
-                                     '&client_secret=' + app.fb_client_token +
-                                     "&grant_type=client_credentials")
-        token_response = json.loads(token_request.text)
-        fb_access_token = token_response['access_token']
-
-        fb_graph_version = 'v4.0'
-        fb_app_id = app.fb_app_id
-        headers = {
-            'Authorization': 'Bearer ' + fb_access_token,
-            'Content-Type': 'application/json',
-        }
-        facebookData = {
-            'event': 'CUSTOM_APP_EVENTS',
-            'advertiser_id': purchase.advertiser_id,
-            'bundle_version': purchase.bundle_short_version,
-            'bundle_short_version': purchase.bundle_short_version,
-            'app_user_id': fb['user_id'],
-            'advertiser_tracking_enabled': fb['advertiser_tracking_enabled'],
-            'application_tracking_enabled': fb['application_tracking_enabled'],
-            'extinfo': fb['extinfo'],
-            'custom_events': [{
-                "_logTime": int(datetime.datetime.now().timestamp()),
-                "fb_transaction_date": purchase.transaction_date,
-                "Transaction Identifier": purchase.transaction_id,
-                "fb_content": [{"id": purchase.product_id, "quantity": 1}],
-                "_valueToSum": purchase.sum,
-                "fb_currency": purchase.currency,
-                "Product Title": b['data']['productTitle'],
-                "fb_num_items": 1,
-                "fb_content_type": "product",
-                "fb_iap_product_type": "inapp",
-                "_eventName": "fb_mobile_purchase",
-            }]
-        }
-
-        print(json.dumps(facebookData))
-
-        log_request = requests.post('https://graph.facebook.com/' + fb_graph_version + '/' + fb_app_id + '/activities',
-                                    data=json.dumps(facebookData), headers=headers)
-        log_response = json.loads(log_request.text)
-
-        print('Facebook Said: ' + str(log_response))
-
-        if log_response['success']:
+        if is_logged:
             purchase.is_logged = 1
             purchase.save()
 
-        return JsonResponse({
-            'status': 'success',
-            'purchase': purchase.as_json()
-        })
+        return JsonResponse({'status': 'success', 'purchase': purchase.as_json()})
