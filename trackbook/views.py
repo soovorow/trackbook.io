@@ -100,7 +100,6 @@ class LogEvent(View):
 
         # Are valid keys in request?
         try:
-            is_sandbox = int(body['data']['isSandbox'])
             transactionID = body['data']['transaction_id']
             advertiser_id = body['data']['advertiser_id']
             product_id = body['data']['product_id']
@@ -117,7 +116,6 @@ class LogEvent(View):
         except Purchase.DoesNotExist:
             purchase = Purchase()
             purchase.app_id = app.id
-            purchase.is_sandbox = is_sandbox
             purchase.transaction_id = transactionID
             purchase.advertiser_id = advertiser_id
             purchase.bundle_short_version = bundle_short_version
@@ -137,18 +135,26 @@ class LogEvent(View):
         b = json.loads(purchase.request_body)
         payload = b['data']['receipt_data']
         requestData = {'receipt-data': payload}
-        env = 'buy'
-        if purchase.is_sandbox: env = 'sandbox'
 
         try:
-            r = requests.post("https://" + env + ".itunes.apple.com/verifyReceipt", data=json.dumps(requestData))
+            r = requests.post("https://buy.itunes.apple.com/verifyReceipt", data=json.dumps(requestData))
             response = json.loads(r.text)
             print(response)
             status = response['status']
             receipt = response['receipt']
         except KeyError:
-            return JsonResponse({'status': 'error', 'message': 'Wrong environment or Apple verification service is '
-                                                                 'not available'})
+            return JsonResponse({'status': 'warning', 'message': 'Apple verification service is not available'})
+
+        if status == 21007:
+            purchase.is_sandbox = 1
+            try:
+                r = requests.post("https://sandbox.itunes.apple.com/verifyReceipt", data=json.dumps(requestData))
+                response = json.loads(r.text)
+                print(response)
+                status = response['status']
+                receipt = response['receipt']
+            except KeyError:
+                return JsonResponse({'status': 'warning', 'message': 'Apple verification service is not available'})
 
         if status != 0:
             return JsonResponse({'status': 'error', 'message': 'Invalid receipt.'})
@@ -232,3 +238,5 @@ class LogEvent(View):
             'status': 'success',
             'purchase': purchase.as_json()
         })
+
+
