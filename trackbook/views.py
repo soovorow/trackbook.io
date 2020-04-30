@@ -19,6 +19,7 @@ from django.views.decorators.http import require_http_methods
 from django.views.generic import CreateView, UpdateView, DetailView, ListView
 from django.views.generic.base import View
 
+from trackbook.logger import Logger
 from trackbook.models import App, Purchase
 
 
@@ -76,8 +77,6 @@ class LogEvent(View):
     http_method_names = ['post']
 
     def post(self, request):
-        logger = logging.getLogger(__name__)
-
         # Is request encoding valid?
         try:
             body = request.body.decode('utf-8')
@@ -140,11 +139,11 @@ class LogEvent(View):
         try:
             r = requests.post("https://buy.itunes.apple.com/verifyReceipt", data=json.dumps(requestData))
             response = json.loads(r.text)
+            Logger.horn(response)
             print(response)
             status = response['status']
             receipt = response['receipt']
         except KeyError:
-            logger.debug(KeyError.args)
             return JsonResponse({'status': 'warning', 'message': 'Apple verification service is not available'})
 
         if status == 21007:
