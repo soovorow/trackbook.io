@@ -157,9 +157,13 @@ class LogEvent(View):
                 return JsonResponse({'status': 'warning', 'message': 'Apple verification service is not available'})
 
         if status != 0:
+            purchase.transaction_id = "fake_" + purchase.transaction_id
+            purchase.save()
             return JsonResponse({'status': 'error', 'message': 'Invalid receipt.'})
 
         if receipt['bundle_id'] != app.bundle_id:
+            purchase.transaction_id = "fake_" + purchase.transaction_id
+            purchase.save()
             return JsonResponse({'status': 'error', 'message': 'Fake receipt.'})
 
         in_app = receipt['in_app']
@@ -170,6 +174,8 @@ class LogEvent(View):
                     purchase.transaction_date = p['purchase_date']
 
         if not isValidPurchase:
+            purchase.transaction_id = "fake_" + purchase.transaction_id
+            purchase.save()
             return JsonResponse({'status': 'error', 'message': 'Fake receipt'})
 
         purchase.is_valid = 1
