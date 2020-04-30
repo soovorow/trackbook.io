@@ -1,6 +1,7 @@
 import datetime
 import json
 import secrets
+import logging
 import urllib
 from json import JSONDecodeError
 
@@ -75,6 +76,7 @@ class LogEvent(View):
     http_method_names = ['post']
 
     def post(self, request):
+        logger = logging.getLogger(__name__)
 
         # Is request encoding valid?
         try:
@@ -133,7 +135,6 @@ class LogEvent(View):
         # Is apple receipt validation passed?
         isValidPurchase = False
         b = json.loads(purchase.request_body)
-        payload = b['data']['receipt_data']
         requestData = {'receipt-data': payload}
 
         try:
@@ -143,6 +144,7 @@ class LogEvent(View):
             status = response['status']
             receipt = response['receipt']
         except KeyError:
+            logger.debug(KeyError.args)
             return JsonResponse({'status': 'warning', 'message': 'Apple verification service is not available'})
 
         if status == 21007:
