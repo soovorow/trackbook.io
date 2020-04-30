@@ -1,0 +1,8 @@
+!#/bin/bash
+
+ps aux | grep gunicorn | awk '{print $2}' | xargs kill
+git pull
+python3 manage.py migrate
+python3 manage.py collectstatic
+gunicorn --bind 127.0.0.1:8000 app.wsgi:application  > ./output 2>&1 &
+netstat -tulpn | grep 8000
