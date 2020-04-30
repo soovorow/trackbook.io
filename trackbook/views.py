@@ -21,6 +21,7 @@ from django.views.generic.base import View
 
 from trackbook.logger import Logger
 from trackbook.models import App, Purchase
+from trackbook.services.apple import Apple
 
 
 class HomeView(View):
@@ -133,42 +134,24 @@ class LogEvent(View):
 
         # Is apple receipt validation passed?
         isValidPurchase = False
-        b = json.loads(purchase.request_body)
-        requestData = {'receipt-data': payload}
 
         try:
-            r = requests.post("https://buy.itunes.apple.com/verifyReceipt", data=json.dumps(requestData))
-            response = json.loads(r.text)
-            Logger.horn(response)
-            print(response)
-            status = response['status']
-            receipt = response['receipt']
-        except KeyError:
+            isSandbox, status, receipt = Apple.verify_receipt(True, payload)
+        except Exception:
+            Logger.error(str(Exception))
             return JsonResponse({'status': 'warning', 'message': 'Apple verification service is not available'})
-
-        if status == 21007:
-            purchase.is_sandbox = 1
-            try:
-                r = requests.post("https://sandbox.itunes.apple.com/verifyReceipt", data=json.dumps(requestData))
-                response = json.loads(r.text)
-                print(response)
-                status = response['status']
-                receipt = response['receipt']
-            except KeyError:
-                return JsonResponse({'status': 'warning', 'message': 'Apple verification service is not available'})
 
         if status != 0:
             purchase.transaction_id = "fake_" + purchase.transaction_id
             purchase.save()
-            return JsonResponse({'status': 'error', 'message': 'Invalid receipt.'})
+            return JsonResponse({'status': 'error', 'message': 'Fake receipt.'})
 
         if receipt['bundle_id'] != app.bundle_id:
             purchase.transaction_id = "fake_" + purchase.transaction_id
             purchase.save()
             return JsonResponse({'status': 'error', 'message': 'Fake receipt.'})
 
-        in_app = receipt['in_app']
-        for p in in_app:
+        for p in receipt['in_app']:
             if p['product_id'] == purchase.product_id:
                 if p['transaction_id'] == purchase.transaction_id:
                     isValidPurchase = True
@@ -179,6 +162,7 @@ class LogEvent(View):
             purchase.save()
             return JsonResponse({'status': 'error', 'message': 'Fake receipt'})
 
+        purchase.is_sandbox = isSandbox
         purchase.is_valid = 1
         purchase.save()
 
@@ -190,6 +174,7 @@ class LogEvent(View):
             })
 
         # Log Facebook Event
+        b = json.loads(purchase.request_body)
         fb = b['data']['fb']
 
         token_request = requests.get('https://graph.facebook.com/oauth/access_token'
@@ -245,5 +230,3 @@ class LogEvent(View):
             'status': 'success',
             'purchase': purchase.as_json()
         })
-
-
