@@ -116,24 +116,24 @@ class LogEvent(View):
 
         # Is purchase in database?
         try:
-            purchase = Purchase.objects.get(transaction_id=transactionID)
-        except Purchase.DoesNotExist:
-            purchase = Purchase()
-            purchase.app_id = app.id
-            purchase.transaction_id = transactionID
-            purchase.advertiser_id = advertiser_id
-            purchase.bundle_short_version = bundle_short_version
-            purchase.product_id = product_id
-            purchase.ext_info = json.dumps(extinfo)
-            purchase.sum = price_sum
-            purchase.currency = currency
-            purchase.request_body = json.dumps(body)
-            purchase.log_timestamp = int(datetime.datetime.now().timestamp())
-            purchase.save()
-
-        # Is purchase already logged?
-        if purchase.is_logged == 1:
+            Purchase.objects.get(transaction_id=transactionID)
             return JsonResponse({'status': 'error', 'message': 'Transaction already logged.'})
+        except Purchase.DoesNotExist:
+            pass
+
+        # Create purchase record
+        purchase = Purchase()
+        purchase.app_id = app.id
+        purchase.transaction_id = transactionID
+        purchase.advertiser_id = advertiser_id
+        purchase.bundle_short_version = bundle_short_version
+        purchase.product_id = product_id
+        purchase.ext_info = json.dumps(extinfo)
+        purchase.sum = price_sum
+        purchase.currency = currency
+        purchase.request_body = json.dumps(body)
+        purchase.log_timestamp = int(datetime.datetime.now().timestamp())
+        purchase.save()
 
         # Is apple receipt validation passed?
         try:
