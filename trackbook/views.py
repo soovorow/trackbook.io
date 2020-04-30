@@ -157,7 +157,7 @@ class LogEvent(View):
             purchase.save()
             return JsonResponse({'status': 'error', 'message': 'Fake receipt.'})
 
-        if purchase.is_sandbox:
+        if 'log_any' not in body and purchase.is_sandbox:
             return JsonResponse({'status': 'success', 'purchase': purchase.as_json() })
 
         # Log Facebook Event
