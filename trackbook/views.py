@@ -180,6 +180,6 @@ class LogEvent(View):
             horn += purchase.currency + " " + str(purchase.sum) + " for "
             horn += "\"" + body['data']['productTitle'] + "\", "
             horn += "(v" + purchase.bundle_short_version + ")"
-            Logger.horn('horn')
+            Logger.horn(horn)
 
         return JsonResponse({'status': 'success', 'purchase': purchase.as_json()})
