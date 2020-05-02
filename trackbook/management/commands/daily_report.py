@@ -17,7 +17,7 @@ class Command(BaseCommand):
         p = Purchase.objects.filter( transaction_date__contains=yesterday)
         count = p.count()
 
-        horn = f"Daily Report \n" \
+        horn = f"*Daily Report* \n" \
                f"Date: {yesterday} UTC \n"
 
         if count > 0:
