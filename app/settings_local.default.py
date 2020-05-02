@@ -1,3 +1,5 @@
+DEBUG = True
+SECRET_KEY = '4ohxt@6bv11x4*$7knh62d498u%-f@78)t_)7z(tzo_!#j+t!0'
 ALLOWED_HOSTS = ['127.0.0.1']
 
 STATIC_ROOT = ''

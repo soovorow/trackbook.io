@@ -19,9 +19,6 @@ except ImportError as e:
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-DEBUG = False
-SECRET_KEY = '4ohxt@6bv11x4*$7knh62d498u%-f@78)t_)7z(tzo_!#j+t!0'
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
