@@ -17,16 +17,18 @@ class Command(BaseCommand):
         p = Purchase.objects.filter( transaction_date__contains=yesterday)
         count = p.count()
 
-        horn = f"Daily Report, {yesterday} UTC: \n"
+        horn = f"Daily Report \n" \
+               f"Date: {yesterday} UTC \n"
 
         if count > 0:
             total = 0
             for purch in p:
                 total += CurrencyConverter(purch.currency, purch.sum).to_usd()
             horn += "Total purchases: %s \n" % count
-            horn += "Estimated revenue ~$%1.2f\n" % total
+            horn += "Estimated revenue ~$%1.2f" % total
         else:
             horn += "There was no any transactions. Sad, but true."
 
         Logger.horn(horn)
+        self.stdout.write(f"{horn}")
         self.stdout.write("Report Sent.")
