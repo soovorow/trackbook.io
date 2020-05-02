@@ -51,7 +51,6 @@ class Facebook:
         response = json.loads(request.text)
         is_logged = response['success']
 
-        Logger.debug('Facebook Said: ' + str(response))
         return is_logged, response
 
 

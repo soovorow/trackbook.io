@@ -84,6 +84,7 @@ class LogEvent(View):
             body = request.body.decode('utf-8')
             body = json.loads(body)
         except Exception:
+            Logger.horn('Warning. Somebody trying to push invalid data.')
             return JsonResponse({'status': 'error', 'message': 'Decoding error. Invalid data.'})
 
         # Is request authenticated?
@@ -93,6 +94,7 @@ class LogEvent(View):
             api_key = auth[1]
             app = App.objects.get(id=app_id, api_key=api_key)
         except Exception:
+            Logger.horn('Warning. Somebody trying to log with unauthorized access.')
             return JsonResponse({'status': 'error', 'message': 'Unauthorized access'})
 
         # Is IOS platform?
@@ -112,6 +114,7 @@ class LogEvent(View):
             payload = body['data']['receipt_data']
             extinfo = body['data']['fb']['extinfo']
         except KeyError:
+            Logger.horn('Warning. Somebody with access token trying to push incorrect key-value data.')
             return JsonResponse({'status': 'error', 'message': 'Incorrect key-value format.'})
 
         # Is purchase in database?
@@ -145,6 +148,7 @@ class LogEvent(View):
             )
         except Exception:
             Logger.error(str(Exception))
+            Logger.horn('Alarm. Apple verification service is not available.')
             return JsonResponse({'status': 'warning', 'message': 'Apple verification service is not available'})
 
         if is_valid:
@@ -155,6 +159,7 @@ class LogEvent(View):
         else:
             purchase.transaction_id = "fake_" + purchase.transaction_id
             purchase.save()
+            Logger.horn('Info. Somebody trying to push fake purchase. Don\'t worry, I handle it.')
             return JsonResponse({'status': 'error', 'message': 'Fake receipt.'})
 
         if 'log_any' not in body and purchase.is_sandbox:
@@ -164,11 +169,17 @@ class LogEvent(View):
         try:
             is_logged, log_response = Facebook.log_purchase(app, purchase)
         except Exception:
-            Logger.error(str(Exception))
+            Logger.horn('Alarm. Facebook purchase log throw exception: ' + str(Exception))
             return JsonResponse({'status': 'error', 'message': 'Facebook log goes wrong'})
 
         if is_logged:
             purchase.is_logged = 1
             purchase.save()
+
+            horn = "Purchase: "
+            horn += purchase.currency + " " + str(purchase.sum) + " for "
+            horn += "\"" + body['data']['productTitle'] + "\", "
+            horn += "(v" + purchase.bundle_short_version + ")"
+            Logger.horn('horn')
 
         return JsonResponse({'status': 'success', 'purchase': purchase.as_json()})
