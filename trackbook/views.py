@@ -176,10 +176,10 @@ class LogEvent(View):
             purchase.is_logged = 1
             purchase.save()
 
-            horn = "Purchase: "
-            horn += purchase.currency + " " + str(purchase.sum) + " for "
-            horn += "\"" + body['data']['productTitle'] + "\", "
-            horn += "(v" + purchase.bundle_short_version + ")"
+            horn = "Purchase: \n"
+            horn += "Price: " + purchase.currency + " " + str(purchase.sum) + " \n"
+            horn += "Product: \"" + body['data']['productTitle'] + "\" \n"
+            horn += "App Version: (v" + purchase.bundle_short_version + ")"
             Logger.horn(horn)
 
         return JsonResponse({'status': 'success', 'purchase': purchase.as_json()})
