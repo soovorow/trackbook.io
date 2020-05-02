@@ -14,7 +14,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         today = datetime.date.today()
         yesterday = today - datetime.timedelta(days=1)
-        p = Purchase.objects.filter( transaction_date__contains=yesterday)
+        p = Purchase.objects.filter(is_logged=1, transaction_date__contains=yesterday)
         count = p.count()
 
         horn = f"*Daily Report* \n" \
