@@ -189,7 +189,7 @@ class LogEvent(View):
             purchase.is_logged = 1
             purchase.save()
 
-            horn = "💰 " + str(purchase.sum) + purchase.currency + " \n"
+            horn = "💰 +" + str(purchase.sum) + purchase.currency + " \n"
             horn += "\"" + body['data']['productTitle'] + " (v" + purchase.bundle_short_version + ")"
             Logger.horn(horn)
 
