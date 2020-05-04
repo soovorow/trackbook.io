@@ -1,4 +1,4 @@
-!#/bin/bash
+#!/bin/bash
 
 ps aux | grep gunicorn | awk '{print $2}' | xargs kill
 gunicorn --bind 127.0.0.1:8000 app.wsgi:application  > ./output 2>&1 &

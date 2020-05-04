@@ -19,7 +19,7 @@ from django.contrib import admin
 from django.urls import include, path
 
 from app import views, settings
-from trackbook.views import HomeView, SignUpView
+from trackbook.views import HomeView, SignUpView, LogDebug
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -28,5 +28,6 @@ urlpatterns = [
     path('auth/signup', SignUpView.as_view(), name='signup'),
     path('auth/', include('django.contrib.auth.urls')),
     path('analytics/', include('trackbook.urls')),
+    path('debug/log', LogDebug.as_view(), name='debug_log'),
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

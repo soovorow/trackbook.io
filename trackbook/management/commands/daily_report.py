@@ -1,11 +1,10 @@
 import datetime
 
 from django.core.management.base import BaseCommand
-from django.utils import timezone
 
 from trackbook.logger import Logger
 from trackbook.models import Purchase
-from trackbook.utils.currencyconverter import CurrencyConverter
+from trackbook.services.currencyconverter import CurrencyConverter
 
 
 class Command(BaseCommand):

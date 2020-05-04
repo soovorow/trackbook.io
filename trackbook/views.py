@@ -1,4 +1,5 @@
 import datetime
+import hashlib
 import json
 import secrets
 import logging
@@ -19,6 +20,7 @@ from django.views.decorators.http import require_http_methods
 from django.views.generic import CreateView, UpdateView, DetailView, ListView
 from django.views.generic.base import View
 
+from trackbook.forms import UploadFileForm
 from trackbook.logger import Logger
 from trackbook.models import App, Purchase
 from trackbook.services.apple import Apple
@@ -74,6 +76,15 @@ class AppDetails(LoginRequiredMixin, DetailView):
     template_name = 'trackbook/data.html'
 
 
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
+
 @method_decorator(csrf_exempt, name='dispatch')
 class LogEvent(View):
     http_method_names = ['post']
@@ -84,7 +95,9 @@ class LogEvent(View):
             body = request.body.decode('utf-8')
             body = json.loads(body)
         except Exception:
-            Logger.horn('Warning. Somebody trying to push invalid data.')
+            ip = get_client_ip(request)
+            Logger.error(ip + " " + request.body)
+            Logger.error(f'Warning. {ip} trying to push invalid data.', True)
             return JsonResponse({'status': 'error', 'message': 'Decoding error. Invalid data.'})
 
         # Is request authenticated?
@@ -183,3 +196,35 @@ class LogEvent(View):
             Logger.horn(horn)
 
         return JsonResponse({'status': 'success', 'purchase': purchase.as_json()})
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class LogDebug(View):
+    http_method_names = ['post']
+
+    def post(self, request):
+
+        # Is request authenticated?
+        try:
+            auth = request.headers['Authorization'].split(' ')[1].split(':')
+            app_id = auth[0]
+            api_key = auth[1]
+            app = App.objects.get(id=app_id, api_key=api_key)
+        except Exception:
+            Logger.horn('Warning. Somebody trying to log with unauthorized access.')
+            return JsonResponse({'status': 'error', 'message': 'Unauthorized access'})
+
+        # Is request valid?
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            f = request.FILES['file']
+            dt = str(datetime.datetime.now())
+            with open(f'/var/www/trackbook.io/uploads/{dt}.txt', 'wb+') as destination:
+                for chunk in f.chunks():
+                    destination.write(chunk)
+            return JsonResponse({'status': 'success', 'message': 'file saved'})
+        else:
+            Logger.error('Warning. Somebody trying to send invalid debug log.')
+            return JsonResponse({'status': 'error', 'message': 'Decoding error. Invalid data.'})
+
+
