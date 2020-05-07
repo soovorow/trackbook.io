@@ -216,7 +216,7 @@ class LogDebug(View):
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
             f = request.FILES['file']
-            dt = str(datetime.datetime.now())
+            dt = str(datetime.datetime.now()).replace(' ', '_')
             with open(f'/var/www/trackbook.io/uploads/{dt}.txt', 'wb+') as destination:
                 for chunk in f.chunks():
                     destination.write(chunk)
