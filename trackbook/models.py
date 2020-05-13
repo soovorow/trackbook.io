@@ -48,7 +48,7 @@ class Purchase(models.Model):
 
     log_timestamp = models.IntegerField()
     transaction_date = models.CharField(max_length=32, null=True)
-    transaction_id = models.CharField(max_length=64, unique=True)
+    transaction_id = models.CharField(max_length=64)
     advertiser_id = models.CharField(max_length=64, null=True)
     fb_user_id = models.CharField(max_length=64, null=True)
 
