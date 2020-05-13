@@ -29,7 +29,7 @@ class Facebook:
             'bundle_version': purchase.bundle_short_version,
             'bundle_short_version': purchase.bundle_short_version,
             'app_user_id': fb['user_id'],
-            'advertiser_tracking_enabled': fb['advertiser_tracking_enabled'],
+            'advertiser_tracking_enabled': str(int(fb['advertiser_tracking_enabled'])),
             'application_tracking_enabled': "1",
             'extinfo': fb['extinfo'],
             'custom_events': [{
