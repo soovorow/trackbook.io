@@ -133,6 +133,7 @@ class LogEvent(View):
         # Is purchase in database?
         try:
             Purchase.objects.get(transaction_id=transactionID)
+            Logger.error('Transaction already logged. Maybe there an issue with lost transactions', True)
             return JsonResponse({'status': 'error', 'message': 'Transaction already logged.'})
         except Purchase.DoesNotExist:
             pass
@@ -161,7 +162,7 @@ class LogEvent(View):
             )
         except Exception:
             Logger.error(str(Exception))
-            Logger.horn('Alarm. Apple verification service is not available.')
+            Logger.error('Alarm. Apple verification service is not available.', True)
             return JsonResponse({'status': 'warning', 'message': 'Apple verification service is not available'})
 
         if is_valid:
@@ -172,7 +173,7 @@ class LogEvent(View):
         else:
             purchase.transaction_id = "fake_" + purchase.transaction_id
             purchase.save()
-            Logger.horn('Info. Somebody trying to push fake purchase. Don\'t worry, I handle it.')
+            Logger.error('Info. Somebody trying to push fake purchase. Don\'t worry, I handle it.', True)
             return JsonResponse({'status': 'error', 'message': 'Fake receipt.'})
 
         if 'log_any' not in body and purchase.is_sandbox:
@@ -182,7 +183,7 @@ class LogEvent(View):
         try:
             is_logged, log_response = Facebook.log_purchase(app, purchase)
         except Exception:
-            Logger.horn('Alarm. Facebook purchase log throw exception: ' + str(Exception))
+            Logger.error('Alarm. Facebook purchase log throw exception: ' + str(Exception), True)
             return JsonResponse({'status': 'error', 'message': 'Facebook log goes wrong'})
 
         if is_logged:
