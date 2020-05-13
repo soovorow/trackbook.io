@@ -30,7 +30,7 @@ class Facebook:
             'bundle_short_version': purchase.bundle_short_version,
             'app_user_id': fb['user_id'],
             'advertiser_tracking_enabled': fb['advertiser_tracking_enabled'],
-            'application_tracking_enabled': fb['application_tracking_enabled'],
+            'application_tracking_enabled': "1",
             'extinfo': fb['extinfo'],
             'custom_events': [{
                 "_logTime": int(datetime.datetime.now().timestamp()),

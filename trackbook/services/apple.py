@@ -1,3 +1,4 @@
+import datetime
 import json
 import requests
 
@@ -37,6 +38,9 @@ class Apple:
             if p['product_id'] == product_id:
                 if p['transaction_id'] == transaction_id:
                     is_valid = True
-                    transaction_date = p['purchase_date']
+                    timestamp = int(int(p['purchase_date_ms']) / 1e3)
+                    date = datetime.datetime.fromtimestamp(timestamp)
+                    date = str(date)+"+0000"
+                    transaction_date = date
 
         return is_sandbox, is_valid, transaction_date
