@@ -20,7 +20,10 @@ class App(models.Model):
 
     fb_app_id = models.CharField(max_length=32)
     fb_client_token = models.CharField(max_length=64)
-    # fb_access_token = models.CharField(max_length=64)
+
+    ads_txt = models.TextField(null=True)
+    terms_of_use = models.TextField(null=True)
+    privacy_policy = models.TextField(null=True)
 
     created_at = models.DateTimeField()
 

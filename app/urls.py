@@ -29,5 +29,10 @@ urlpatterns = [
     path('auth/', include('django.contrib.auth.urls')),
     path('analytics/', include('trackbook.urls')),
     path('debug/log', LogDebug.as_view(), name='debug_log'),
+    #  TODO add url patter for marketing url
+    #  TODO add url patter for ads txt
+    #  TODO add url patter for privacy policy
+    #  TODO add url patter for terms of use
+    #  TODO add url patter for support url
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

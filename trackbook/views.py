@@ -68,12 +68,35 @@ class AppCreate(LoginRequiredMixin, CreateView):
 
 class AppUpdate(LoginRequiredMixin, UpdateView):
     model = App
-    fields = ['app_name', 'bundle_id', 'fb_app_id', 'fb_client_token']
+    fields = [
+        'app_name', 'bundle_id', 'fb_app_id', 'fb_client_token',
+        'ads_txt', 'terms_of_use', 'privacy_policy'
+    ]
 
 
 class AppDetails(LoginRequiredMixin, DetailView):
     model = App
     template_name = 'trackbook/data.html'
+
+
+class MarketingUrl(DetailView):
+    model = App
+    template_name = 'trackbook/marketingUrl.html'
+
+
+class AdsTxt(DetailView):
+    model = App
+    template_name = 'trackbook/adsTxt.html'
+
+
+class PrivacyPolicy(DetailView):
+    model = App
+    template_name = 'trackbook/privacyPolicy.html'
+
+
+class TermsOfUse(DetailView):
+    model = App
+    template_name = 'trackbook/termsOfUse.html'
 
 
 def get_client_ip(request):
